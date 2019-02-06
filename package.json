@@ -1,6 +1,6 @@
 {
   "name": "react-native-chip-tags",
-  "description": "Easy input for tags with chips",
+  "description": "Input for tags with chips",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha --require react-native-mock/mock.js --compilers js:babel-core/register --recursive tests/**/*.test.js",
@@ -76,7 +76,7 @@
       "git add"
     ]
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "directories": {
     "test": "tests"
   }

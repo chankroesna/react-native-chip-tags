@@ -2,10 +2,7 @@ import React, { Component } from "react";
 import { View, ScrollView } from "react-native";
 
 // Components
-import Chip from "../chip/chipView";
-
-// Styles
-import styles from "./tagAreaStyles";
+import { Chip } from "../chip/chipView";
 
 export default class TagAreaView extends Component {
   constructor(props) {
@@ -49,6 +46,7 @@ export default class TagAreaView extends Component {
     const { currentText, chips, chipsCount } = this.state;
     const { handleTagChanged } = this.props;
     const _currentText = (currentText && currentText.trim()) || text;
+    const _chips = chips.filter(chip => chip && chip !== " ");
 
     if (_currentText && chips && chips.length < chipsCount) {
       this.setState({
@@ -57,8 +55,8 @@ export default class TagAreaView extends Component {
       });
     }
 
-    if (handleTagChanged && chips.length < chipsCount + 1) {
-      handleTagChanged([...chips, _currentText]);
+    if (handleTagChanged && _chips.length < chipsCount + 1) {
+      handleTagChanged([..._chips, _currentText]);
     }
   };
 
@@ -81,36 +79,48 @@ export default class TagAreaView extends Component {
   };
 
   render() {
-    const { isPreviewActive } = this.props;
-    const { chips, activeChip, currentText } = this.state;
+    const {
+      autoCapitalize,
+      chipStyle,
+      editable,
+      maxLength,
+      multiline,
+      pinChipIndex,
+      placeholder,
+      placeholderColor,
+      tagWrapper,
+      wrapperStyle
+    } = this.props;
+    const { activeChip, chips, chipsCount, currentText } = this.state;
 
     return (
-      <View style={{ paddingHorizontal: 16 }}>
-        <ScrollView horizontal style={styles.tagWrapper}>
+      <View style={wrapperStyle}>
+        <ScrollView horizontal style={tagWrapper}>
           {chips.map(
             (chip, i) =>
-              i < 5 && (
+              i < chipsCount && (
                 <Chip
                   key={i}
                   refs={input => {
                     this.inputs[i] = input;
                   }}
-                  isPin={i === 0 && chips[1]}
-                  placeholderTextColor="#fff"
-                  editable={!isPreviewActive}
-                  maxLength={50}
-                  placeholder="tags"
+                  isPin={i === pinChipIndex && chips[pinChipIndex + 1]}
+                  placeholderTextColor={placeholderColor || "#fff"}
+                  editable={editable}
+                  maxLength={maxLength || 50}
+                  placeholder={placeholder || "tags"}
                   autoFocus={i !== 0 && chips.length - 1 === i}
-                  multiline={false}
+                  multiline={multiline || false}
                   handleOnChange={text => this._handleOnChange(text, i)}
                   handleOnBlur={() => this._handleOnBlur(i)}
                   blurOnSubmit
+                  style={chipStyle}
                   value={
                     activeChip === i
                       ? currentText || chip.replace(/\s/g, "")
                       : chip.replace(/\s/g, "")
                   }
-                  autoCapitalize="none"
+                  autoCapitalize={autoCapitalize || "none"}
                   onFocus={() => this.setState({ activeChip: i })}
                   {...this.props}
                 />
